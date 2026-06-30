@@ -1,0 +1,11 @@
+.productCard .productDetails{
+    transition: transform 0.3s ease-out;
+}
+
+.productCard:hover{
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.productCard :hover .productDetails{
+    transform: translateY(-1rem);
+}
