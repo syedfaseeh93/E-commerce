@@ -41,7 +41,7 @@ public class CartItemServiceImpl implements CartItemService {
         if (user.getId().equals(userId)) {
             item.setQuantity(cartItem.getQuantity());
             item.setPrice(item.getQuantity() * item.getProduct().getPrice());
-            item.setDiscountedPrice(item.getDiscountedPrice() * item.getProduct().getDiscountedPrice());
+            item.setDiscountedPrice(item.getQuantity() * item.getProduct().getDiscountedPrice());
         }
         return cartItemRepository.save(item);
 
@@ -49,31 +49,29 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public CartItem isCartItemExist(Cart cart, Product product, String size, Long userId) {
-        CartItem cartItem=cartItemRepository.isCartItemExist(cart, product, size, userId);
+        CartItem cartItem = cartItemRepository.isCartItemExist(cart, product, size, userId);
         return cartItem;
     }
 
     @Override
     public void removeCartItem(Long userId, Long cartItemId) throws CartItemException, UserException {
-        User user=userService.findUserByid(userId);
-        CartItem cartItem=findCartItemById(cartItemId);
+        User user = userService.findUserByid(userId);
+        CartItem cartItem = findCartItemById(cartItemId);
 
-        if(cartItem.getUserId().equals(user.getId())){
+        if (cartItem.getUserId().equals(user.getId())) {
             cartItemRepository.deleteById(cartItemId);
-        }
-        else {
+        } else {
             throw new UserException("user Not Found with UserId : " + userId);
         }
     }
 
     @Override
     public CartItem findCartItemById(Long cartItemId) throws CartItemException {
-        Optional<CartItem> opt =cartItemRepository.findById(cartItemId);
-        if(opt.isPresent()){
+        Optional<CartItem> opt = cartItemRepository.findById(cartItemId);
+        if (opt.isPresent()) {
             return opt.get();
-        }
-        else{
-            throw new CartItemException("Cart item Not Found with ID: "+cartItemId);
+        } else {
+            throw new CartItemException("Cart item Not Found with ID: " + cartItemId);
         }
     }
 

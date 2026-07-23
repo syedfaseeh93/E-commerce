@@ -37,7 +37,7 @@ public class AdminProductController {
         return new ResponseEntity<>(product,HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{productId}/deleteProduct")
+    @DeleteMapping("/deleteProduct/{productId}")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long productId) throws ProductException{
 
         productService.deleteProduct(productId);
@@ -48,7 +48,7 @@ public class AdminProductController {
         return new ResponseEntity<>(res,HttpStatus.OK);
     }
     
-    @PutMapping("/{productId}/updateProduct")
+    @PutMapping("/updateProduct/{productId}")
     public ResponseEntity<Product> putMethodName(@PathVariable Long productId, @RequestBody Product req) throws ProductException{
        
         Product product=productService.updateProduct(productId, req); 

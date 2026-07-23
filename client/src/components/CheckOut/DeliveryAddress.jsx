@@ -4,25 +4,32 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { createOrder, getOrderById } from "../../state/Order/Action";
 
 const DeliveryAddress = () => {
 
+  const dispatch=useDispatch();
+  const navigate = useNavigate()
+
   const HandleSubmit = (e) => {
     e.preventDefault()
-    const data=new FormData(e.currentTarget)
-    const address={
-      FirstName:data.get('FirstName'),
-      LastName:data.get('LastName'),
-      Address:data.get('Address'),
-      City:data.get('City'),
-      State:data.get('State'),
-      PinCode:data.get('pin-code'),
-      Phonenumber:data.get('phoneNumber'),
+
+    const data = new FormData(e.currentTarget)
+
+    const address = {
+      firstName: data.get('FirstName'),
+      lastName: data.get('LastName'),
+      streetAddress: data.get('Address'),
+      city: data.get('City'),
+      state: data.get('State'),
+      pin_code: data.get('pin-code'),
+      mobile: data.get('phoneNumber'),
     }
-    console.log(address)
+    console.log(address,navigate)
+    dispatch(createOrder(address,navigate));
   };
 
-  const navigate=useNavigate()
 
   return (
     <div className="px-6 shadow-md pb-18 rounded-md">
@@ -30,12 +37,7 @@ const DeliveryAddress = () => {
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 5 }} className="rounded-md">
           <div className=" mx-2 overflow-y-scroll h-140 p-4 mb-4">
-             {[1,1].map((i)=><AddressCard />) }
-            <Box>
-              <Button onClick={()=>navigate('/account/orders')} sx={{ bgcolor: "blue", color: "white",px:4}}>
-                Deliver Here
-              </Button>
-            </Box>
+            {<AddressCard />}
           </div>
         </Grid>
 
@@ -112,7 +114,7 @@ const DeliveryAddress = () => {
                   fullWidth
                 />
               </Grid>
-              <Button type="submit" sx={{ bgcolor: "blue", color: "white", px:4,py:1.5}}>
+              <Button type="submit" sx={{ bgcolor: "blue", color: "white", px: 4, py: 1.5 }}>
                 Add Address
               </Button>
             </Grid>

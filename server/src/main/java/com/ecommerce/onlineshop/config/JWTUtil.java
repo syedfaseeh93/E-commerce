@@ -20,7 +20,7 @@ import io.jsonwebtoken.security.Keys;
 public class JWTUtil {
     private final String MySecretKey = "My_super_secretKey_chupake_Rakhna_hai_ye_Key_Ku_7993897591";
     private final SecretKey key = Keys.hmacShaKeyFor(MySecretKey.getBytes());
-    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 1 DAY
+    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 7; // 1 DAY
 
     public String GenerateToken(String username) {
         return Jwts.builder()

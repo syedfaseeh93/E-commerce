@@ -4,7 +4,7 @@ import "./ProductCard.css";
 const ProductCard = ({ product }) => {
   const navigate=useNavigate();
   const HandleClick=()=>{
-    navigate(`/products/${4}`);
+    navigate(`/products/${product.id}`);
   }
   return (
     <div onClick={HandleClick} className="productCard cursor-pointer">
@@ -12,7 +12,7 @@ const ProductCard = ({ product }) => {
         <div className="productImage h-80">
           <img
             className="h-full w-full object-cover object-top-left"
-            src={product.imageUrl}
+            src={product.imageURL}
             alt=""
           />
         </div>
@@ -27,7 +27,7 @@ const ProductCard = ({ product }) => {
             <p className="font-bold">${product.discountedPrice}</p>
             <p className="line-through opacity-60">${product.price}</p>
             <p className="font-bold text-green-500">
-              {product.discountPersent} % off
+              {product.discountPercent} % off
             </p>
           </div>
         </div>

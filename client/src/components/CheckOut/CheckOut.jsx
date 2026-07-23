@@ -5,88 +5,55 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import DeliveryAddress from "./DeliveryAddress";
 import OrderSummary from "./OrderSummary";
+import AddressCard from "../AddressCard/AddressCard";
+import Cart from "../Cart/Cart";
 
-const steps = ["Login", "Delivery Address", "Order Summary", "Payment"];
 
 export default function HorizontalLinearStepper() {
-  const location = useLocation();
-  const querysearch = new URLSearchParams(location.search);
-  const step = querysearch.get("step");
-  const navigate = useNavigate();
+  const checkoutSteps = [
+    { label: "Login", component: null },
+    { label: "Delivery Address", component: <DeliveryAddress /> },
+    { label: "Order Summary", component: <OrderSummary /> },
+    { label: "Payment", component: null },
+  ];
 
-  const [activeStep, setActiveStep] = React.useState(step);
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [skipped, setSkipped] = React.useState(new Set());
+  const activeStep = Number(searchParams.get("step")) || 0;
 
-  const isStepOptional = (step) => {
-    return step === 1;
+  const goToStep = (step) => {
+    setSearchParams({ step });
   };
 
-  const isStepSkipped = (step) => {
-    return skipped.has(step);
-  };
+  const nextStep = () => {
+    if (activeStep < 1) {
+      goToStep(activeStep + 1);
+    }
+  }
 
-  const handleBack = () => {
-    setActiveStep((prevStep) => {
-
-      if(prevStep!==0){
-        const newStep = prevStep - 1;
-        querysearch.set("step", newStep);
-        const query = querysearch.toString();
-        navigate({ search: `?${query}` });       
-        return newStep;
-      }
-    });
+  const previousStep = () => {
+    if (activeStep > 0) {
+      goToStep(activeStep - 1);
+    }
   };
 
   return (
     <Box sx={{ width: "100%", marginTop: 8 }}>
       <Stepper activeStep={activeStep}>
-        {steps.map((label, index) => {
-          const stepProps = {};
-          const labelProps = {};
-          if (isStepOptional(index)) {
-            labelProps.optional = (
-              <Typography variant="caption">Optional</Typography>
-            );
-          }
-          if (isStepSkipped(index)) {
-            stepProps.completed = false;
-          }
-          return (
-            <Step key={label} {...stepProps}>
-              <StepLabel {...labelProps}>{label}</StepLabel>
-            </Step>
-          );
-        })}
+        {checkoutSteps.map(({ label }) => (
+          <Step key={label}>
+            <StepLabel>{label}</StepLabel>
+          </Step>
+        ))}
       </Stepper>
-      {activeStep === steps.length ? (
-        <React.Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>
-            All steps completed - you&apos;re finished
-          </Typography>
-        </React.Fragment>
-      ) : (
-        <React.Fragment>
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-            <Button
-              color="inherit"
-              disabled={activeStep === 0}
-              onClick={handleBack}
-              sx={{ mr: 1 }}
-            >
-              Back
-            </Button>
-          </Box>
-
-          <div className="mt-8">
-            {step == 2 ? <DeliveryAddress /> : <OrderSummary />}
-          </div>
-        </React.Fragment>
-      )}
+      <Box sx={{ display: "flex", justifyContent: "space-between", m: 4 }}>
+        <Button onClick={previousStep}>Back</Button>
+        {activeStep >= 1 ? null : <Button onClick={nextStep}>Next</Button>}
+      </Box>
+      {checkoutSteps[activeStep]?.component}
     </Box>
   );
 }
