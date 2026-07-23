@@ -39,11 +39,8 @@ public class AppConfig {
                 .cors(cors -> {
                 })
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .httpBasic(basic -> {
-                })
-                .formLogin(form -> {
-                });
-
+                .httpBasic(httpBasic -> httpBasic.disable())
+                .formLogin(form -> form.disable());
         return http.build();
     }
 
@@ -63,7 +60,7 @@ public class AppConfig {
                 = new UrlBasedCorsConfigurationSource();
 
         source.registerCorsConfiguration("/**", cfg);
-        
+
         return source;
     }
 

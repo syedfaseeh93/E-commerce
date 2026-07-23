@@ -14,7 +14,7 @@ const OrderDetails = () => {
       </div>
 
       <div className="space-y-4 ">
-        {[1, 1, 1, 1].map((i) => (
+        {[1, 1,].map((i) => (
           <Grid
             container
             className="border border-gray-300 shadow-lg hover:shadow-2xl cursor-pointer"

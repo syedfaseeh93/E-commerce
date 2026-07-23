@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogBackdrop,
@@ -25,11 +25,14 @@ import {
 import ProductCard from "./ProductCard";
 import { mens_kurta } from "../../Data/mens_kurta";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { findProducts } from "../../state/Products/Action";
+import { mens_Shirt } from "../../Data/mens_Shirts";
 
 const sortOptions = [
-  { name: "Price: Low to High", href: "#", current: false },
-  { name: "Price: High to Low", href: "#", current: false },
+  { name: "Price: Low to High", value: "price_low", current: false },
+  { name: "Price: High to Low", value: "price_high", current: false },
 ];
 
 const filters = [
@@ -42,18 +45,18 @@ const filters = [
       { value: "blue", label: "Blue", checked: false },
       { value: "brown", label: "Brown", checked: false },
       { value: "green", label: "Green", checked: false },
-      { value: "purple", label: "Purple", checked: false },
+      { value: "black", label: "Black", checked: false },
     ],
   },
   {
-    id: "category",
-    name: "Category",
+    id: "price",
+    name: "price",
     options: [
-      { value: "new-arrivals", label: "New Arrivals", checked: false },
-      { value: "sale", label: "Sale", checked: false },
-      { value: "travel", label: "Travel", checked: false },
-      { value: "organization", label: "Organization", checked: false },
-      { value: "accessories", label: "Accessories", checked: false },
+      { value: "199-399", label: "199-399", checked: false },
+      { value: "399-599", label: "399-599", checked: false },
+      { value: "599-799", label: "599-799", checked: false },
+      { value: "799-999", label: "799-999", checked: false },
+      { value: "999-1599", label: "999-1599", checked: false },
     ],
   },
   {
@@ -75,10 +78,56 @@ function classNames(...classes) {
 export default function Product() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const navigate = useNavigate();
+  const param = useParams();
   const location = useLocation();
+  const dispatch = useDispatch()
+  const { product } = useSelector(store => store);
+
+  const [searchparams] = useSearchParams();
+  const selectedPrice = searchparams.get("price");
+  const selectedColors = searchparams.get("color")?.split(",") || [];
+  const selectedSizes = searchparams.get("size")?.split(",") || [];
+
+  const colorValue = searchparams.get("color");
+  const sizeValue = searchparams.get("sizes");
+  const priceValue = searchparams.get("price");
+  const category = param.levelThree || "";
+  const discount = searchparams.get("minDiscount") || 0;
+  const sort = searchparams.get("sort") || "price_low";
+  const stock = searchparams.get("stock") || "in_stock";
+  const pageNumber = searchparams.get("pageNumber") || 1;
+
+
+  useEffect(() => {
+    const [minPrice, maxPrice] = priceValue === null ? [0, 10000] : priceValue.split("-").map(Number);
+
+    const data = {
+      category: category,
+      sizes: sizeValue || [],
+      colors: colorValue || [],
+      minPrice,
+      maxPrice,
+      sort: sort,
+      stock: stock,
+      minDiscount: discount,
+      pageNumber: pageNumber - 1,
+      pageSize: 10
+    }
+    dispatch(findProducts(data));
+  }, [param.levelThree,
+    colorValue,
+    sizeValue,
+    priceValue,
+    category,
+    discount,
+    sort,
+    stock,
+    pageNumber
+  ])
+
 
   const HandleChange = (value, sectionId) => {
-    
+
     const searchParams = new URLSearchParams(location.search);
 
     let filterValues = searchParams.getAll(sectionId);
@@ -107,6 +156,34 @@ export default function Product() {
 
     navigate({ search: `?${query}` });
   };
+
+
+  const HandlePriceChange = (value) => {
+    const searchParams = new URLSearchParams(location.search);
+
+    if(selectedPrice==value){
+      searchParams.delete("price");
+    }
+    else{
+      searchParams.set("price", value);
+    }
+
+    navigate({
+      search: `?${searchParams.toString()}`
+    });
+  }
+
+  const HandleSortChange = (value) => {
+
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set("sort", value);
+
+    navigate({
+      search: `?${searchParams.toString()}`
+    });
+  }
+
+  console.log(product.products.content)
 
   return (
     <div className="bg-white">
@@ -174,7 +251,7 @@ export default function Product() {
                                 <input
                                   defaultValue={option.value}
                                   id={`filter-mobile-${section.id}-${optionIdx}`}
-                                  name={`${section.id}[]`}
+                                  name={`${section.id}`}
                                   type="checkbox"
                                   className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
                                 />
@@ -240,13 +317,15 @@ export default function Product() {
                   <div className="py-1">
                     {sortOptions.map((option) => (
                       <MenuItem key={option.name}>
-                        <a
-                          href={option.href}
+                        <a 
+                          onClick={() => {
+                            HandleSortChange(option.value)
+                          }}
                           className={classNames(
                             option.current
                               ? "font-medium text-gray-900"
                               : "text-gray-500",
-                            "block px-4 py-2 text-sm data-focus:bg-gray-100 data-focus:outline-hidden",
+                            "block px-4 py-2 text-sm data-focus:bg-gray-100 data-focus:outline-hidden cursor-pointer",
                           )}
                         >
                           {option.name}
@@ -317,17 +396,31 @@ export default function Product() {
                           <div key={option.value} className="flex gap-3">
                             <div className="flex h-5 shrink-0 items-center">
                               <div className="group grid size-4 grid-cols-1">
-                                <input
-                                  onChange={() => {
-                                    HandleChange(option.value, section.id);
-                                  }}
-                                  defaultValue={option.value}
-                                  defaultChecked={option.checked}
-                                  id={`filter-${section.id}-${optionIdx}`}
-                                  name={`${section.id}[]`}
-                                  type="checkbox"
-                                  className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
-                                />
+                                {section.id === "price" ? (
+                                  <input
+                                    type="checkbox"
+                                    name="price"
+                                    value={option.value}
+                                    checked={selectedPrice === option.value}
+                                    id={`filter-mobile-${section.id}-${optionIdx}`}
+                                    onChange={() => HandlePriceChange(option.value)}
+                                    className="col-start-1 row-start-1  rounded-full border border-gray-300"
+                                  />
+                                ) : (
+                                  <input
+                                    type="checkbox"
+                                    checked={
+                                      section.id === "color"
+                                        ? selectedColors.includes(option.value)
+                                        : selectedSizes.includes(option.value)
+                                    }
+                                    name={section.id}
+                                    value={option.value}
+                                    id={`filter-mobile-${section.id}-${optionIdx}`}
+                                    onChange={() => HandleChange(option.value, section.id)}
+                                    className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600"
+                                  />
+                                )}
                                 <svg
                                   fill="none"
                                   viewBox="0 0 14 14"
@@ -366,11 +459,19 @@ export default function Product() {
 
               {/* Product grid */}
               <div className="lg:col-span-4">
-                <div className="flex flex-wrap">
-                  {mens_kurta.map((item) => (
-                    <ProductCard key={item.imageUrl} product={item} />
-                  ))}
-                </div>
+                {product.products?.content?.length > 0 ?
+                  (<div className="flex flex-wrap">
+                    {product.products?.content?.map((item) => (
+                      <ProductCard key={item.imageURL} product={item} />
+                    ))}
+                  </div>)
+                  :
+                  (<div className="flex h-80 w-full items-center justify-center">
+                    <h1 className="text-2xl font-bold text-gray-500">
+                      No Products Available
+                    </h1>
+                  </div>)
+                }
               </div>
             </div>
           </section>

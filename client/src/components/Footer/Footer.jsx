@@ -10,7 +10,7 @@ const Footer = () => {
         bgcolor: "black",
         color: "white",
         py: 8,
-        px: 68,
+        px: 30,
         textAlign: "center",
       }}
       container
@@ -81,7 +81,7 @@ const Footer = () => {
         </div>
       </Grid>
 
-      <Grid   sx={{ mx: 6 }}>
+      <Grid   sx={{ mx: 6}}>
         <Typography className="pb-10 font-bold text-2xl" varient="h6">
           Documentation
         </Typography>
@@ -122,7 +122,7 @@ const Footer = () => {
         </div>
       </Grid>
 
-      <Grid pt={6} sx={{textAlign:'center', mx:24,pt:18,color:'gray'}} >
+      <Grid sx={{textAlign:'center', mx:24,pt:14,color:'gray'}} >
         <Typography varient="body2">
           &copy; 2026 Made By SyedFaseeh.All Rights Reserved
         </Typography>

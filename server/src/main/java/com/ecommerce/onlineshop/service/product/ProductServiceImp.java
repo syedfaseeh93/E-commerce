@@ -101,7 +101,7 @@ public class ProductServiceImp implements ProductService {
     @Override
     public Product findProductById(Long productId) throws ProductException {
         Optional<Product> optional=productRepository.findById(productId);
-         
+        
         if(optional.isPresent()){
             return optional.get();
         }
@@ -110,11 +110,11 @@ public class ProductServiceImp implements ProductService {
     }
 
     @Override
-    public Page<Product> getAllProducts(String Category, List<String> colors, List<String> sizes, Integer minPrice,Integer maxPrice, Integer minDiscount, String sort, String stock, Integer pageNumber, Integer pageSize) {
+    public Page<Product> getAllProducts(String category, List<String> colors, List<String> sizes, Integer minPrice,Integer maxPrice, Integer minDiscount, String sort, String stock, Integer pageNumber, Integer pageSize) {
 
         Pageable pageable=PageRequest.of(pageNumber, pageSize);
 
-        List<Product> products=productRepository.filterProducts(Category, minPrice, maxPrice, minDiscount, sort);
+        List<Product> products=productRepository.filterProducts(category, minPrice, maxPrice, minDiscount, sort);
 
         if(!colors.isEmpty()){
             products=products.stream().filter(p->colors.stream().anyMatch(c->c.equalsIgnoreCase(p.getColor()))).collect(Collectors.toList());
@@ -135,7 +135,7 @@ public class ProductServiceImp implements ProductService {
         List<Product> pageContent =products.subList(startindex, endindex);
 
         Page<Product> filteredProduct=new PageImpl<>(pageContent,pageable,products.size());
-       return filteredProduct;
+        return filteredProduct;
     }
 
     @Override

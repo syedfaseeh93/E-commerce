@@ -41,12 +41,12 @@ public class CartItemController {
 
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<CartItem> updateCartItem(@RequestHeader("Authorization") String jwt,@RequestBody CartItem item)throws UserException,CartItemException{
+    @PutMapping("/{cartItemId}/update")
+    public ResponseEntity<CartItem> updateCartItem(@RequestHeader("Authorization") String jwt,@PathVariable Long cartItemId,@RequestBody CartItem item)throws UserException,CartItemException{
         
         User user=userService.findUserProfileByJWT(jwt);
         
-        CartItem cartItem=cartItemService.updateCartItem(user.getId(), item.getId(), item);
+        CartItem cartItem=cartItemService.updateCartItem(user.getId(), cartItemId, item);
     
         return new ResponseEntity<>(cartItem,HttpStatus.OK);
     }
