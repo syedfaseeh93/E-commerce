@@ -103,7 +103,11 @@ export default function ProductDetails() {
         size: selectedSize.name
     };
 
+    console.log("Before dispatch");
+
     await dispatch(addcartitem(data));
+
+    console.log("After dispatch");
     navigate("/cart");
 };
 
