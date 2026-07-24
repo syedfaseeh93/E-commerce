@@ -25,7 +25,10 @@ import com.ecommerce.onlineshop.response.Authresponse;
 import com.ecommerce.onlineshop.service.cart.CartService;
 import com.ecommerce.onlineshop.service.user.MyUserDetailsService;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {
+    "http://localhost:5173",
+    "https://e-commerce-yr6p-beta.vercel.app"
+})
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
