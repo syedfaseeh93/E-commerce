@@ -49,7 +49,10 @@ public class AppConfig {
 
         CorsConfiguration cfg = new CorsConfiguration();
 
-        cfg.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        cfg.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5173",
+                "https://e-commerce-yr6p-beta.vercel.app"
+        ));
         cfg.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         cfg.setAllowedHeaders(Arrays.asList("*"));
         cfg.setAllowCredentials(true);
