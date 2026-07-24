@@ -97,11 +97,15 @@ export default function ProductDetails() {
 
   const navigate = useNavigate();
 
-  const HandleAddtoCart = () => {
-    navigate('/cart');
-    const data = { productId: params.productId, size: selectedSize.name }
-    dispatch(addcartitem(data))
-  }
+  const HandleAddtoCart = async () => {
+    const data = {
+        productId: params.productId,
+        size: selectedSize.name
+    };
+
+    await dispatch(addcartitem(data));
+    navigate("/cart");
+};
 
   return (
     <div className="bg-white">
@@ -250,7 +254,7 @@ export default function ProductDetails() {
 
                   <button
                     onClick={HandleAddtoCart}
-                    type="submit"
+                    type="button"
                     className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
                   >
                     Add to bag
