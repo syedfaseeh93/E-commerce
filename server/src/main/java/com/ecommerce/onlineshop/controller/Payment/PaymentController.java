@@ -24,7 +24,6 @@ import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import org.springframework.web.bind.annotation.GetMapping;
 
-
 @RestController
 @RequestMapping("/api")
 public class PaymentController {
@@ -67,7 +66,7 @@ public class PaymentController {
             notify.put("email", true);
             paymentLinkRequest.put("notify", notify);
 
-            paymentLinkRequest.put("callback_url", "http://localhost:5173/payment/" + orderId);
+            paymentLinkRequest.put("callback_url","https://e-commerce-yr6p-beta.vercel.app/payment/" + orderId);
             paymentLinkRequest.put("callback_method", "get");
 
             PaymentLink payment = razorpay.paymentLink.create(paymentLinkRequest);
@@ -90,8 +89,8 @@ public class PaymentController {
 
         Order order = orderService.findOrderByOrderId(orderId);
 
-        System.out.println("PAYMENT ID --------->"+paymentId);
-        System.out.println("PAYMENT ID --------->"+orderId);
+        System.out.println("PAYMENT ID --------->" + paymentId);
+        System.out.println("PAYMENT ID --------->" + orderId);
 
         RazorpayClient razorpay = new RazorpayClient(apikey, apiSecret);
 
